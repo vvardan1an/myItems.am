@@ -19,21 +19,21 @@ public class LoginServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        req.getRequestDispatcher("/WEB-INF/login.jsp").forward(req,resp);
+        req.getRequestDispatcher("/WEB-INF/login.jsp").forward(req, resp);
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String email = req.getParameter("email");
         String password = req.getParameter("password");
-        User user = userManager.getByEmailAndPassword(email, password);
-        if(user == null){
-            req.setAttribute("message","User does not exists.");
-            req.getRequestDispatcher("/WEB-INF/login.jsp").forward(req,resp);
-        }else {
+        User user = userManager.getUserByEmailAndPassword(email, password);
+        if (user == null) {
+            req.setAttribute("message", "User does not exists.");
+            req.getRequestDispatcher("/WEB-INF/login.jsp").forward(req, resp);
+        } else {
             HttpSession session = req.getSession();
-            session.setAttribute("user",user);
-            resp.sendRedirect("/account");
+            session.setAttribute("user", user);
+            resp.sendRedirect("/");
         }
 
     }

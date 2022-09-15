@@ -1,9 +1,7 @@
 package manager;
 
 import database.DBConnectionProvider;
-import model.Category;
 import model.Item;
-import model.User;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -18,16 +16,14 @@ public class ItemManager {
     private final UserManager userManager = new UserManager();
 
     public void add(Item item) {
-        String sql = "insert into item(title,price,category_id,pic_url,user_id) VALUES (?,?,?,?,?)";
+        String sql = "insert into item(title,price,category_id, pic_url, user_id) VALUES (?,?,?,?,?)";
         try {
-
             PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             ps.setString(1, item.getTitle());
             ps.setDouble(2, item.getPrice());
-            ps.setInt(3, Integer.parseInt(String.valueOf(item.getCategory())));
+            ps.setInt(3, item.getCategory().getId());
             ps.setString(4, item.getCatPic());
-            ps.setInt(5, Integer.parseInt(String.valueOf(item.getUser())));
-
+            ps.setInt(5, item.getUser().getId());
             ps.executeUpdate();
             ResultSet resultSet = ps.getGeneratedKeys();
             if (resultSet.next()) {
@@ -40,27 +36,27 @@ public class ItemManager {
     }
 
     public List<Item> getAll() {
-        String sql = "select * from item";
-        List<Item> books = new ArrayList<>();
+        String sql = "SELECT * FROM item ORDER BY id DESC LIMIT 20";
+        List<Item> itemList = new ArrayList<>();
         try {
             Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery(sql);
 
             while (resultSet.next()) {
-                books.add(getItemFromResultSet(resultSet));
+                itemList.add(getItemFromResultSet(resultSet));
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return books;
+        return itemList;
     }
 
     public Item getById(int id) {
-        String sql = "select * from item where id = " + id;
+        String sql = "select * from item where id = ?";
         try {
-            Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery(sql);
-
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setInt(1, id);
+            ResultSet resultSet = ps.executeQuery();
             if (resultSet.next()) {
                 return getItemFromResultSet(resultSet);
             }
@@ -70,8 +66,24 @@ public class ItemManager {
         return null;
     }
 
+    public List<Item> getItemByUserId(int id) {
+        List<Item> items = new ArrayList<>();
+        String sql = "SELECT * FROM item WHERE user_id = ? ";
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, id);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                items.add(getItemFromResultSet(resultSet));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return items;
+    }
+
     public void removeItem(int id) {
-        String sql = "delete from item where id =" + id;
+        String sql = "DELETE FROM item WHERE id = " + id;
         try {
             Statement statement = connection.createStatement();
             statement.executeUpdate(sql);
@@ -81,19 +93,13 @@ public class ItemManager {
     }
 
     private Item getItemFromResultSet(ResultSet resultSet) throws SQLException {
-        Item item = new Item();
-        item.setId(resultSet.getInt("id"));
-        item.setTitle(resultSet.getString("title"));
-        item.setPrice(resultSet.getDouble("price"));
-        int category = resultSet.getInt("category_id");
-        item.setCatPic(resultSet.getString("pic_url"));
-        int user = resultSet.getInt("user_id");
-        Category category1 = categoryManager.getById(category);
-        User user1 = userManager.getById(user);
-
-        item.setCategory(category1);
-        item.setUser(user1);
-
-        return item;
+        return Item.builder()
+                .id(resultSet.getInt(1))
+                .title(resultSet.getString(2))
+                .price(resultSet.getDouble(3))
+                .category(categoryManager.getCategoryById(resultSet.getInt(4)))
+                .catPic(resultSet.getString(5))
+                .user(userManager.getUserById(resultSet.getInt(6)))
+                .build();
     }
 }

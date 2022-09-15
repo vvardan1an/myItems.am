@@ -48,7 +48,7 @@ public class UserManager {
         return users;
     }
 
-    public User getById(int id) {
+    public User getUserById(int id) {
         String sql = "select * from user where id = " + id;
         try {
             Statement statement = connection.createStatement();
@@ -84,14 +84,13 @@ public class UserManager {
         return user;
     }
 
-    public User getByEmailAndPassword(String email, String password) {
-        String sql = "select * from user where email = ? and password = ?";
+    public User getUserByEmailAndPassword(String email, String password) {
+        String sql = "SELECT * FROM user WHERE email = ? AND password = ?";
         try {
-            PreparedStatement preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setString(1, email);
-            preparedStatement.setString(2, password);
-            ResultSet resultSet = preparedStatement.executeQuery();
-
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setString(1, email);
+            ps.setString(2, password);
+            ResultSet resultSet = ps.executeQuery();
             if (resultSet.next()) {
                 return getUserFromResultSet(resultSet);
             }

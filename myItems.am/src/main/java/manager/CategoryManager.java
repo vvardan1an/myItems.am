@@ -3,7 +3,7 @@ package manager;
 
 import database.DBConnectionProvider;
 import model.Category;
-import model.User;
+
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -48,11 +48,12 @@ public class CategoryManager {
         return categories;
     }
 
-    public Category getById(int id) {
-        String sql = "select * from category where id = " + id;
+    public Category getCategoryById(int id) {
+        String sql = "select * from category where id = ?";
         try {
-            Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery(sql);
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1,id);
+            ResultSet resultSet = preparedStatement.executeQuery();
 
             if (resultSet.next()) {
                 return getCategoryFromResultSet(resultSet);

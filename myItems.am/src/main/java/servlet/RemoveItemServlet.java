@@ -1,5 +1,6 @@
 package servlet;
 
+import manager.ItemManager;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -8,11 +9,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@WebServlet(urlPatterns = "/account")
-public class AccountServlet extends HttpServlet {
+@WebServlet(urlPatterns = "/item/remove")
+public class RemoveItemServlet extends HttpServlet {
+
+    private static final ItemManager itemManager = new ItemManager();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        req.getRequestDispatcher("/WEB-INF/account.jsp").forward(req, resp);
+        int itemId = Integer.parseInt(req.getParameter("itemId"));
+        itemManager.removeItem(itemId);
+        resp.sendRedirect("/myItems");
     }
 }
