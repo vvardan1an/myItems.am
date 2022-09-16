@@ -74,6 +74,7 @@ public class CategoryManager {
         }
     }
 
+
     private  Category getCategoryFromResultSet(ResultSet resultSet) throws SQLException {
         Category category = new Category();
         category.setId(resultSet.getInt("id"));

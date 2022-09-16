@@ -92,6 +92,18 @@ public class ItemManager {
         }
     }
 
+    public List<Item> showItem(int id) {
+        List<Item> items = new ArrayList<>();
+        String sql = "select from item where category_id = ?";
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.executeQuery();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return items;
+    }
+
     private Item getItemFromResultSet(ResultSet resultSet) throws SQLException {
         return Item.builder()
                 .id(resultSet.getInt(1))

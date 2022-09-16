@@ -11,18 +11,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@WebServlet(urlPatterns = "/index.html")
-public class ItemAndCatServlet extends HttpServlet {
+@WebServlet(urlPatterns = "/catId")
+public class ItemsByIdServlet extends HttpServlet {
 
-    private final CategoryManager categoryManager = new CategoryManager();
     private final ItemManager itemManager = new ItemManager();
-    private final Item item = new Item();
+    private final CategoryManager categoryManager = new CategoryManager();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        req.setAttribute("categories",categoryManager.getAll());
-        req.setAttribute("item",itemManager.getAll());
-
-        req.getRequestDispatcher("index.jsp").forward(req, resp);
+        int categoryId = Integer.parseInt(req.getParameter("categoryId"));
+        req.setAttribute("itemList",categoryId == 0 ? itemManager.getAll():itemManager.showItem(categoryId));
+        req.getRequestDispatcher("/").forward(req,resp);
     }
 }
