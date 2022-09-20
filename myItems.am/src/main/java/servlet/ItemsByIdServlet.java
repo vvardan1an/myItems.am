@@ -21,6 +21,6 @@ public class ItemsByIdServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         int categoryId = Integer.parseInt(req.getParameter("categoryId"));
         req.setAttribute("itemList",categoryId == 0 ? itemManager.getAll():itemManager.showItem(categoryId));
-        req.getRequestDispatcher("/").forward(req,resp);
+        req.getRequestDispatcher("index.jsp").forward(req,resp);
     }
 }

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Add User</title>
+</head>
+<body>
+
+<form action="/users/add" method="post">
+
+  <input type="text" name="name" placeholder="Please input name" /><br>
+  <input type="text" name="surname" placeholder="Please input surname" /><br>
+  <input type="email" name="email" placeholder="Please input email" /><br>
+  <select name="role">
+    <option value="MANAGER">MANAGER</option>
+    <option value="USER">USER</option>
+  </select><br>
+  <input type="submit" name="Add">
+
+</form>
+
+</body>
+</html>
